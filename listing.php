@@ -1,78 +1,105 @@
-<!-- add home page code here -->
-<!-- abhigyan -->
-<?php
-require_once 'session.php';
-?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CureTech</title>
+    <title>Real Estate Listings</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
         }
-
         .container {
-            padding-top: 20px;
-            /* display: flex; */
-            /* width: 100%; */
-            /* justify-content: center;
-            align-items: center; */
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
-        .blogpage {
-            display: flex;
-            justify-content: start;
-            padding: 10px;
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            margin-bottom: 30px;
+        }
+        input[type="text"],
+        textarea {
             width: 100%;
-            border-radius: 30px;
-            align-items: center;
-            background-color: black;
-            height: auto;
-            flex-direction: column;
-            color: white;
+            padding: 10px;
+            margin: 5px 0 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
         }
-
-        .carousel {
-            width: 640px;
-            height: 360px;
+        input[type="submit"] {
+            padding: 10px 20px;
+            border: none;
+            background: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .listing {
+            border-bottom: 1px solid #ddd;
+            padding: 15px 0;
+        }
+        .listing img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
         }
     </style>
 </head>
-
 <body>
     <div class="container">
-        <div class="blogpage">
-            <h1>listed properties</h1>
-        </div>
+        <h1>Real Estate Listings</h1>
+        
+        <form action="add_property.php" method="post" enctype="multipart/form-data">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required>
+            
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" required>
+            
+            <label for="price">Price:</label>
+            <input type="text" id="price" name="price" required>
+            
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" rows="4"></textarea>
+            
+            <!-- <label for="image">Image:</label>
+            <input type="file" id="image" name="image">
+             -->
+            <label for="images">Images:</label>
+            <input type="file" id="images" name="images[]" multiple>
 
-    </div>
-    <div id="carouselExampleAutoplaying" class="carousel slide " data-bs-ride="carousel">
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <img src="https://via.placeholder.com/800x400" class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item">
-                <img src="https://via.placeholder.com/800x400" class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item">
-                <img src="https://via.placeholder.com/800x400" class="d-block w-100" alt="...">
-            </div>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
+            <input type="submit" value="Add Property">
+        </form>
+
+        <h2>Available Listings</h2>
+    <?php
+        // Fetch and display the property listings
+        include 'db_connection.php';
+
+        $result = $conn->query("SELECT * FROM properties ORDER BY id DESC");
+
+            while($row = $result->fetch_assoc()) {
+                echo "<div class='listing'>";
+                    if ($row['image']) {
+                        echo "<img src='uploads/" . $row['image'] . "' alt='Property Image'>";
+        }
+                    echo "<h3><a href='view_property.php?id=" . $row['id'] . "'>" . $row['title'] . "</a></h3>";
+                    echo "<p>Location: " . $row['location'] . "</p>";
+                    echo "<p>Price: $" . $row['price'] . "</p>";
+                    echo "<p>" . $row['description'] . "</p>";
+                    echo "</div>";
+}
+
+$conn->close();
+?>
+
     </div>
 </body>
-
-
 </html>
